@@ -6,6 +6,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private Rigidbody carRB;
     [SerializeField] private Transform[] rayPoints;
     [SerializeField] private Transform accelerationPoint;
+    [SerializeField] LayerMask driveable;
 
     [SerializeField] private float springStiffness;
     [SerializeField] private float damperStiffness;
@@ -100,7 +101,7 @@ public class Movement : MonoBehaviour
         {
             RaycastHit hit;
             float maxLength = restLength + springTravel;
-            bool rayDidHit = Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxLength + wheelRadius);
+            bool rayDidHit = Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxLength + wheelRadius, driveable);
 
             if (!rayDidHit)
             {

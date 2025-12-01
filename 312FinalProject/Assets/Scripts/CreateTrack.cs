@@ -1,12 +1,15 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class CreateTrack : MonoBehaviour
 {
+    [Range(10, 300)] public int trackLength = 10;
     [SerializeField] GameObject startPiece;
     [SerializeField] GameObject endPiece;
     [SerializeField] GameObject[] middlePieces;
+    [SerializeField] GameObject player;
 
     List<GameObject> CreatedPieces = new List<GameObject>();
     private HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
@@ -14,13 +17,67 @@ public class CreateTrack : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(BuildTrack());
+        // Instantiate(player, transform.position, Quaternion.identity);
+    }
+
+    private IEnumerator BuildTrack()
+    {
+        SpawnStart();
+        yield return null;
+
+        while (CreatedPieces.Count < trackLength)
+        {
+            SpawnPiece();
+            yield return null;
+        }
+        SpawnEnd();
+    }
+
+    private void SpawnStart()
+    {
         GameObject startLine = Instantiate(startPiece, transform.position, Quaternion.identity);
         CreatedPieces.Add(startLine);
-
         var tp = startLine.GetComponent<TrackPiece>();
         occupiedCells.Add(QuantizePosition(tp.frontTransform.position));
     }
 
+    private void SpawnEnd()
+    {
+        GameObject lastPiece = CreatedPieces.Last();
+        TrackPiece lastTrack = lastPiece.GetComponent<TrackPiece>();
+
+        Transform connectPoint = lastTrack.frontTransform;
+
+        // Instantiate new piece in a temporary pose
+        GameObject newPiece = Instantiate(endPiece, Vector3.zero, Quaternion.identity);
+        TrackPiece newTrack = newPiece.GetComponent<TrackPiece>();
+
+        // 1. Align rotation
+        newPiece.transform.rotation =
+            connectPoint.rotation * Quaternion.Inverse(newTrack.backTransform.localRotation);
+
+        // 2. Align position
+        Vector3 offset = newTrack.backTransform.position - newPiece.transform.position;
+        newPiece.transform.position = connectPoint.position - offset;
+ 
+        // 3. FOOTPRINT OVERLAP CHECK
+        if (IsOverlapping(newTrack))
+        {
+            Destroy(newPiece);
+            Destroy(CreatedPieces.Last());
+            CreatedPieces.Remove(CreatedPieces.Last());
+            foreach (GameObject gameoobject in CreatedPieces)
+            {
+                Debug.Log(gameObject.ToString());
+            }
+            Debug.Log("InvalidPiece");
+            return; // INVALID — OVERLAP DETECTED
+        }
+
+        // 4. Accept piece
+        CreatedPieces.Add(newPiece);
+    }
 
     public void OnInteract()
     {
@@ -30,38 +87,6 @@ public class CreateTrack : MonoBehaviour
     private void SpawnPiece()
     {
         int randInt = Random.Range(0, middlePieces.Length);
-        // GameObject lastPiece = CreatedPieces.Last();
-        // TrackPiece lastTrack = lastPiece.GetComponent<TrackPiece>();
-
-        // Transform connectPoint = lastTrack.frontTransform;
-
-        // // Instantiate the new piece with no alignment yet
-        // GameObject newPiece = Instantiate(middlePieces[randInt], Vector3.zero, Quaternion.identity);
-        // TrackPiece newTrack = newPiece.GetComponent<TrackPiece>();
-
-        // // Align rotation
-        // newPiece.transform.rotation = connectPoint.rotation * 
-        //                               Quaternion.Inverse(newTrack.backTransform.rotation); //local rotation?
-
-        // // Align position
-        // // Vector3 offset = newTrack.backTransform.position - newPiece.transform.position;
-        // // newPiece.transform.position = connectPoint.position - offset;
-
-        // newPiece.transform.position += (connectPoint.position - newTrack.backTransform.position);
-
-        // // Compute the intended new front position
-        // Vector3Int newFront = QuantizePosition(newTrack.frontTransform.position);
-
-        // // Check if this space is already occupied
-        // if (occupiedCells.Contains(newFront))
-        // {
-        //     Destroy(newPiece);
-        //     return; // INVALID PIECE
-        // }
-
-        // // Otherwise accept the placement
-        // occupiedCells.Add(newFront);
-        // CreatedPieces.Add(newPiece);
 
         GameObject lastPiece = CreatedPieces.Last();
         TrackPiece lastTrack = lastPiece.GetComponent<TrackPiece>();
@@ -84,6 +109,11 @@ public class CreateTrack : MonoBehaviour
         if (IsOverlapping(newTrack))
         {
             Destroy(newPiece);
+            if (CreatedPieces.Count > 1)
+            {
+                Destroy(CreatedPieces.Last());
+                CreatedPieces.Remove(CreatedPieces.Last());
+            }
             Debug.Log("InvalidPiece");
             return; // INVALID — OVERLAP DETECTED
         }

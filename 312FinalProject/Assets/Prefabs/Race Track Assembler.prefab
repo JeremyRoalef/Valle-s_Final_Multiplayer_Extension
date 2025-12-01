@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4383216122458012000}
   - component: {fileID: 1600271322302963224}
+  - component: {fileID: 5027345914122672175}
   m_Layer: 0
   m_Name: Race Track Assembler
   m_TagString: Untagged
@@ -44,9 +45,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05eb7f3307bfd8a40a312aed623dff10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreateTrack
+  trackLength: 30
   startPiece: {fileID: 2577909734199552205, guid: a1cc2c74391c2e940899c255375efaa3, type: 3}
   endPiece: {fileID: 2577909734199552205, guid: eeb82742daed3d14982ffaf09faefa40, type: 3}
   middlePieces:
   - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
   - {fileID: 6131757618941875706, guid: 0f0c37ed5b9dd5948aba569b3dd2d2ca, type: 3}
   - {fileID: 6131757618941875706, guid: 9e4ede6527d92614e91c7227aeae548c, type: 3}
+  - {fileID: 6579079418631765903, guid: de562622222f5874ea2a0778c7474d6b, type: 3}
+  - {fileID: 6579079418631765903, guid: ff043be84df546e44befccd1aa6ca775, type: 3}
+  - {fileID: 1112519989191399561, guid: f812c3b6d5de340479f7df907ab84a9f, type: 3}
+  - {fileID: 2871320682542785899, guid: 24774f69b1a3a0448a0ae441b8138aa2, type: 3}
+  - {fileID: 2871320682542785899, guid: c50ee6c4f26ff77448a752b3eb017e65, type: 3}
+  - {fileID: 1112519989191399561, guid: 32dda90c521a70a4b8db6cd476e834af, type: 3}
+  - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
+  - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
+  - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
+  player: {fileID: 8149684190073921161, guid: 86959afce0271a947a9eb3269ed2cc76, type: 3}
+--- !u!114 &5027345914122672175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901506317006889812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
