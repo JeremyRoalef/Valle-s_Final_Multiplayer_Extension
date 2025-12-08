@@ -60,6 +60,8 @@ MonoBehaviour:
   - {fileID: 1112519989191399561, guid: 32dda90c521a70a4b8db6cd476e834af, type: 3}
   - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
   - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
+  - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
+  - {fileID: 2577909734199552205, guid: e75ff6e92f82d4247b5f5e0b5dd30637, type: 3}
   player: {fileID: 8149684190073921161, guid: 86959afce0271a947a9eb3269ed2cc76, type: 3}
 --- !u!114 &5027345914122672175
 MonoBehaviour:

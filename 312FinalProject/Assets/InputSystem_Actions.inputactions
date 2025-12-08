@@ -205,7 +205,7 @@
                     "path": "<XRController>/{Primary2DAxis}",
                     "interactions": "",
                     "processors": "",
-                    "groups": "XR",
+                    "groups": "XR;Gamepad",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false

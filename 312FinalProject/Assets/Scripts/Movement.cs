@@ -6,9 +6,12 @@ public class Movement : MonoBehaviour
     [SerializeField] private Rigidbody carRB;
     [SerializeField] private Transform[] rayPoints;
     [SerializeField] private Transform accelerationPoint;
-    [SerializeField] LayerMask driveable;
-    [SerializeField] GameObject[] tires = new GameObject[4];
-    [SerializeField] private float tireRotationSpeed = 3000f;
+    [SerializeField] private LayerMask driveable;
+    [SerializeField] private GameObject[] tires = new GameObject[4];
+    [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
+    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[2];
+    [SerializeField] private ParticleSystem[] skidSmokes = new ParticleSystem[2];
+    [SerializeField] private AudioSource engineSound, skidSound;
 
     [SerializeField] private float springStiffness;
     [SerializeField] private float damperStiffness;
@@ -22,6 +25,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private float steerStrength = 15f;
     [SerializeField] private AnimationCurve turningCurve;
     [SerializeField] private float dragCoefficient = 1f;
+    [SerializeField] private float tireRotationSpeed = 3000f;
+    [SerializeField] private float maxSteeringAngle = 30f;
+    [SerializeField] private float minSideSkidVelocity = 10f;
 
     private int[] wheelsIsGrounded = new int[4];
     [HideInInspector] public bool isGrounded = false;
@@ -30,6 +36,10 @@ public class Movement : MonoBehaviour
     private float carVelocityRatio;
     private Vector3 startPos;
     private Quaternion startRotation;
+    [SerializeField]
+    [Range(0,1)] private float minPitch = 1f;
+    [SerializeField]
+    [Range(0,5)] private float maxpitch = 5f;
 
     void Awake()
     {
@@ -55,6 +65,7 @@ public class Movement : MonoBehaviour
         CalculateCarVelocity();
         Move();
         Visuals();
+        EngineSound();
     }
  
     // Get input using new Unity input actions
@@ -185,6 +196,7 @@ public class Movement : MonoBehaviour
             // Add the calculated spring force
             carRB.AddForceAtPosition(springDir * force, rayPoints[i].position);
 
+            // Adjust the visual tire position
             SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius);
 
             Debug.DrawLine(rayPoints[i].position, hit.point, Color.red);
@@ -220,20 +232,81 @@ public class Movement : MonoBehaviour
     private void Visuals()
     {
         TireVisuals();
+        VFX();
     }
 
-    private void TireVisuals()
+    private void VFX()
     {
-        for (int i = 0; i < tires.Length; i++)
+        // If we're grounded and our car has sideways momentum "skidding"
+        if (isGrounded && currentCarLocalVelocity.x > minSideSkidVelocity)
         {
-            if (i < 2)
+            ToggleSkidMarks(true);
+            ToggleSkidSmokes(true);
+            ToggleSkidSound(true);
+        }
+        else
+        {
+            ToggleSkidMarks(false);
+            ToggleSkidSmokes(false);
+            ToggleSkidSound(false);
+        }
+    }
+
+    // Toggle the skid marks
+    private void ToggleSkidMarks(bool toggle)
+    {
+        foreach (var skidMark in skidMarks)
+        {
+            skidMark.emitting = toggle;
+        }
+    }
+
+    // Toggle the particle effects
+    private void ToggleSkidSmokes(bool toggle)
+    {
+        foreach (var smoke in skidSmokes)
+        {
+            if (toggle)
             {
-                tires[i].transform.Rotate(Vector3.right, tireRotationSpeed * carVelocityRatio * Time.deltaTime, Space.Self);
+                smoke.Play();
             }
             else
+            {
+                smoke.Stop();
+            }
+        }
+    }
+
+    // Tire rotation effects
+    private void TireVisuals()
+    {
+        float steeringAngle = maxSteeringAngle * movement.x;
+
+        for (int i = 0; i < tires.Length; i++)
+        {
+            if (i < 2) // for the front tires we rotate forward/backwards and rotate on y-axis for steering
+            {
+                tires[i].transform.Rotate(Vector3.right, tireRotationSpeed * carVelocityRatio * Time.deltaTime, Space.Self);
+
+                frontTireParents[i].transform.localEulerAngles = 
+                    new Vector3(frontTireParents[i].transform.localEulerAngles.x,
+                                steeringAngle, frontTireParents[i].transform.localEulerAngles.z);
+            }
+            else // rear tires just rotate forward and backwards.
             {
                 tires[i].transform.Rotate(Vector3.right, tireRotationSpeed * movement.y * Time.deltaTime, Space.Self);
             }
         }
+    }
+
+    // Engine sound lerp for engine revving sound effect.
+    private void EngineSound()
+    {
+        engineSound.pitch = Mathf.Lerp(minPitch, maxpitch, Mathf.Abs(carVelocityRatio));
+    }
+
+    private void ToggleSkidSound(bool toggle)
+    {
+        skidSound.mute = !toggle;
     }
 }

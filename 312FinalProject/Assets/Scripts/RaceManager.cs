@@ -135,12 +135,12 @@ public class RaceManager : MonoBehaviour
 
         // Fail condition: if fail hasn't already triggered or you've spent too long mid-air or not 
         // progressing to the next checkpoint, begin fail sequence. 
-        if (!failTriggered && (timeSinceGrounded > 5f || timeSinceLastCheckpoint > 10f))
-        {
-            failTriggered = true;
-            raceStarted = false;           // pause race
-            playerMovement.StopPlayer();
-            UIManager.Instance.ShowFail(); // show fail overlay
-        }
+        // if (!failTriggered && (timeSinceGrounded > 5f || timeSinceLastCheckpoint > 10f))
+        // {
+        //     failTriggered = true;
+        //     raceStarted = false;           // pause race
+        //     playerMovement.StopPlayer();
+        //     UIManager.Instance.ShowFail(); // show fail overlay
+        // }
     }
 }
