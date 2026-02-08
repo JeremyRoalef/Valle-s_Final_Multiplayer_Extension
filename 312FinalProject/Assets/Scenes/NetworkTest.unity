@@ -787,7 +787,6 @@ MonoBehaviour:
   buttonStartHost: {fileID: 576200169}
   buttonStartClient: {fileID: 1065940594}
   inputFieldJoinCode: {fileID: 1286422821}
-  tmProJoinCode: {fileID: 509975188}
 --- !u!114 &847980511
 MonoBehaviour:
   m_ObjectHideFlags: 0

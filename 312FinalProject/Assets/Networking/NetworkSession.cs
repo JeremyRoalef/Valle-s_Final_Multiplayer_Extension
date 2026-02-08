@@ -61,6 +61,10 @@ public class NetworkSession : MonoBehaviour
             //Sign into authn services
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
+
+        //Client connection/disconnection
+        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnected;
     }
 
     /// <summary>
@@ -184,5 +188,15 @@ public class NetworkSession : MonoBehaviour
         Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
         initStatus = InitStatus.SignedIn;
         AuthenticationService.Instance.SignedIn -= HandleAuthServiceSignIn;
+    }
+
+    private void HandleClientDisconnected(ulong clientID)
+    {
+        Debug.Log($"Client disconnected: {clientID}");
+    }
+
+    private void HandleClientConnected(ulong clientID)
+    {
+        Debug.Log($"Client connected: {clientID}");
     }
 }
